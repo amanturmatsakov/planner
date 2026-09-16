@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Планер">
+<meta name="theme-color" content="#0f1115">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f1115'/%3E%3Ccircle cx='50' cy='50' r='34' fill='none' stroke='%235b8cff' stroke-width='8'/%3E%3Cpath d='M36 50 l10 10 l20 -20' fill='none' stroke='%233ecf8e' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f1115'/%3E%3Ccircle cx='50' cy='50' r='34' fill='none' stroke='%235b8cff' stroke-width='8'/%3E%3Cpath d='M36 50 l10 10 l20 -20' fill='none' stroke='%233ecf8e' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>Планер — система планирования</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
+    --text:#e8eaf0; --muted:#8b93a7; --accent:#5b8cff; --good:#3ecf8e;
+    --warn:#f5b84f; --year:#a06bff; --q:#5b8cff; --m:#3ecf8e; --w:#f5b84f; --d:#8b93a7;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:20px 16px 80px}
+  header{
+    position:sticky;top:0;z-index:20;
+    background:linear-gradient(180deg,var(--bg) 70%,rgba(15,17,21,0));
+    padding:14px 0 10px;margin-bottom:6px;
+  }
+  .topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  h1{font-size:20px;margin:0;letter-spacing:.2px}
+  .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .spacer{flex:1}
+  .btn{
+    background:var(--panel2);color:var(--text);border:1px solid var(--line);
+    padding:8px 12px;border-radius:10px;font-size:13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;transition:.15s;
+  }
+  .btn:hover{border-color:var(--accent);background:#232838}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.danger:hover{border-color:#ff6b6b;color:#ff9b9b}
+  .btn.small{padding:4px 8px;font-size:12px;border-radius:8px}
+  .hint{font-size:12px;color:var(--muted);margin:8px 2px 14px}
+
+  .tree{display:flex;flex-direction:column;gap:8px}
+  .node{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .row{
+    display:flex;align-items:center;gap:8px;padding:10px 12px;
+  }
+  .row:hover{background:var(--panel2)}
+  .caret{
+    width:22px;height:22px;flex:0 0 22px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--muted);border-radius:6px;font-size:11px;user-select:none;
+  }
+  .caret:hover{background:#2a2f3a;color:var(--text)}
+  .caret.leaf{visibility:hidden}
+  .chk{
+    width:20px;height:20px;flex:0 0 20px;border-radius:6px;border:2px solid var(--line);
+    cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;
+    transition:.12s;color:transparent;font-size:13px;line-height:1;
+  }
+  .chk.on{background:var(--good);border-color:var(--good);color:#08130d}
+  .title{flex:1;font-size:14.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .title.done{color:var(--muted);text-decoration:line-through}
+  .badge{
+    font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.3px;
+    flex:0 0 auto;border:1px solid transparent;
+  }
+  .b-year{background:rgba(160,107,255,.15);color:var(--year);border-color:rgba(160,107,255,.35)}
+  .b-quarter{background:rgba(91,140,255,.15);color:var(--q);border-color:rgba(91,140,255,.35)}
+  .b-month{background:rgba(62,207,142,.15);color:var(--m);border-color:rgba(62,207,142,.35)}
+  .b-week{background:rgba(245,184,79,.15);color:var(--w);border-color:rgba(245,184,79,.35)}
+  .b-day{background:rgba(139,147,167,.15);color:var(--d);border-color:rgba(139,147,167,.35)}
+  .prog{flex:0 0 120px;display:flex;align-items:center;gap:8px}
+  .bar{flex:1;height:6px;background:#2a2f3a;border-radius:6px;overflow:hidden}
+  .bar>span{display:block;height:100%;background:var(--good);border-radius:6px;transition:width .25s}
+  .pct{font-size:12px;color:var(--muted);width:38px;text-align:right;font-variant-numeric:tabular-nums}
+  .acts{display:flex;gap:2px;flex:0 0 auto}
+  .iconbtn{
+    width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--muted);
+    cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;
+  }
+  .iconbtn:hover{background:#2a2f3a;color:var(--text)}
+  .children{
+    margin:0 0 8px 26px;padding-left:14px;border-left:2px solid var(--line);
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .children.hidden{display:none}
+  .addchild{
+    margin:2px 0 8px 26px;padding-left:14px;border-left:2px solid transparent;
+  }
+  .addchild .btn{opacity:.75}
+  .addchild .btn:hover{opacity:1}
+
+  /* editor */
+  .editor{
+    background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+    padding:12px;margin:2px 0 8px 26px;display:flex;flex-direction:column;gap:10px;
+  }
+  .editor input[type=text]{
+    background:var(--bg);border:1px solid var(--line);color:var(--text);
+    padding:9px 11px;border-radius:9px;font-size:14px;width:100%;
+  }
+  .editor input[type=text]:focus{outline:none;border-color:var(--accent)}
+  .editor .lrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .lvlopt{
+    font-size:12px;padding:5px 10px;border-radius:20px;border:1px solid var(--line);
+    cursor:pointer;color:var(--muted);background:var(--panel);
+  }
+  .lvlopt.sel{color:#fff;border-color:transparent}
+  .lvlopt.sel[data-lv=year]{background:var(--year)}
+  .lvlopt.sel[data-lv=quarter]{background:var(--q)}
+  .lvlopt.sel[data-lv=month]{background:var(--m)}
+  .lvlopt.sel[data-lv=week]{background:var(--w)}
+  .lvlopt.sel[data-lv=day]{background:var(--d)}
+  .editor .erow{display:flex;gap:8px;justify-content:flex-end}
+
+  .empty{
+    text-align:center;color:var(--muted);padding:50px 20px;font-size:14px;
+    border:1px dashed var(--line);border-radius:var(--radius);
+  }
+  .toast{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    background:var(--panel2);border:1px solid var(--line);color:var(--text);
+    padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;
+    transition:.25s;z-index:50;
+  }
+  .toast.show{opacity:1}
+  .summary{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px 16px;margin-bottom:16px;
+  }
+  .summary .big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+  .summary .lbl{color:var(--muted);font-size:12.5px;margin-bottom:6px}
+  .summary .bar{height:8px;margin-top:8px}
+  @media(max-width:560px){
+    .prog{flex-basis:92px}
+    .title{font-size:13.5px}
+    .acts .iconbtn:nth-child(n+3){display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <div>
+        <h1>🎯 Планер</h1>
+        <div class="sub">Дерево целей · год → квартал → месяц → неделя → день</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn" id="btnExport">⬇ Экспорт</button>
+      <button class="btn" id="btnImport">⬆ Импорт</button>
+      <input type="file" id="fileImport" accept="application/json" style="display:none">
+    </div>
+  </header>
+
+  <div class="summary" id="summary" style="display:none">
+    <div class="lbl">Общий прогресс по всем целям</div>
+    <div class="big" id="sumPct">0%</div>
+    <div class="bar"><span id="sumBar" style="width:0%"></span></div>
+  </div>
+
+  <div class="hint">Галочки ставь на задачах (день). Процент считается сам и поднимается наверх: день → неделя → месяц → квартал → год. Клик по названию — переименовать, «+» — добавить подпункт.</div>
+
+  <div class="tree" id="tree"></div>
+  <div style="margin-top:14px">
+    <button class="btn primary" id="btnAddRoot">＋ Добавить цель</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const LS_KEY = "planner.v1";
+const LEVELS = {
+  year:{label:"Год", cls:"b-year"},
+  quarter:{label:"Квартал", cls:"b-quarter"},
+  month:{label:"Месяц", cls:"b-month"},
+  week:{label:"Неделя", cls:"b-week"},
+  day:{label:"День", cls:"b-day"}
+};
+let uid = 0;
+const nid = () => "n" + Date.now().toString(36) + (uid++).toString(36);
+
+function seed(){
+  const mk = (title, level, done, children) => ({id:nid(), title, level, done:!!done, open:true, children:children||[]});
+  return [
+    mk("🦷 Вылечить зубы (дедлайн: ноябрь 2026)", "year", false, [
+      mk("Q3 2026 (сен–окт): осмотр и план лечения", "quarter", false, [
+        mk("Сентябрь: осмотр + панорамный снимок, план лечения", "month", false, [
+          mk("Неделя 14–20 сентября: записаться и осмотр", "week", false, [
+            mk("Записаться к стоматологу (осмотр)", "day"),
+            mk("Панорамный снимок (ОПГ)", "day"),
+            mk("Получить план лечения + стоимость", "day")
+          ]),
+          mk("Неделя 21–27 сентября: старт лечения", "week", false, [
+            mk("Первый приём — начать лечение", "day")
+          ])
+        ])
+      ]),
+      mk("Q4 2026 (ноябрь): завершение", "quarter", false, [
+        mk("Ноябрь: завершить лечение + контроль", "month", false, [
+          mk("Неделя 2–8 ноября: финал", "week", false, [
+            mk("Завершить основное лечение", "day"),
+            mk("Контрольный осмотр — подтвердить, что всё закрыто", "day")
+          ])
+        ])
+      ])
+    ]),
+    mk("🫆 Вылечить бронхит (дедлайн: конец сентября 2026)", "year", false, [
+      mk("Q3 2026: диагностика и лечение", "quarter", false, [
+        mk("Сентябрь: лечение", "month", false, [
+          mk("Неделя 14–20 сентября: диагностика и старт", "week", false, [
+            mk("Врач (терапевт) — диагноз и схема лечения", "day"),
+            mk("Рентген грудной клетки (если назначит врач)", "day"),
+            mk("Начать лечение по схеме врача", "day")
+          ]),
+          mk("Неделя 21–27 сентября: довести до конца", "week", false, [
+            mk("Продолжить лечение, отслеживать симптомы", "day"),
+            mk("Контроль у врача — подтвердить выздоровление", "day")
+          ])
+        ])
+      ])
+    ])
+  ];
+}
+
+let data = load();
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return seed();
+}
+function save(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(data)); }catch(e){}
+}
+
+function pct(node){
+  if(!node.children || node.children.length===0) return node.done ? 100 : 0;
+  const s = node.children.reduce((a,c)=>a+pct(c),0);
+  return Math.round(s / node.children.length);
+}
+
+const $ = sel => document.querySelector(sel);
+const treeEl = $("#tree");
+let editingId = null;   // node id currently in editor
+let addChildTo = null;  // parent id: editor is in "add child" mode
+let editorLevel = "day";
+
+function findNode(id, list){
+  for(const n of list||data){
+    if(n.id===id) return n;
+    const f = findNode(id, n.children);
+    if(f) return f;
+  }
+  return null;
+}
+function findParent(id, list, parent){
+  for(const n of list||data){
+    if(n.id===id) return {list:list||data, node:n, parent};
+    const f = findParent(id, n.children, n);
+    if(f) return f;
+  }
+  return null;
+}
+
+function render(){
+  treeEl.innerHTML = "";
+  if(!data.length){
+    treeEl.innerHTML = '<div class="empty">Пока пусто. Добавь первую цель кнопкой ниже.</div>';
+  }
+  data.forEach(n => treeEl.appendChild(renderNode(n, 0)));
+  renderSummary();
+  save();
+}
+
+function renderSummary(){
+  const el = $("#summary");
+  if(!data.length){ el.style.display="none"; return; }
+  el.style.display = "block";
+  const p = Math.round(data.reduce((a,c)=>a+pct(c),0)/data.length);
+  $("#sumPct").textContent = p + "%";
+  $("#sumBar").style.width = p + "%";
+}
+
+function renderNode(node, depth){
+  const wrap = document.createElement("div");
+  wrap.className = "node";
+  const p = pct(node);
+  const hasKids = node.children && node.children.length>0;
+
+  const row = document.createElement("div");
+  row.className = "row";
+
+  // caret
+  const caret = document.createElement("div");
+  caret.className = "caret" + (hasKids ? "" : " leaf");
+  caret.textContent = node.open ? "▾" : "▸";
+  caret.onclick = () => { if(hasKids){ node.open = !node.open; render(); } };
+  row.appendChild(caret);
+
+  // checkbox
+  const chk = document.createElement("div");
+  chk.className = "chk" + (node.done ? " on" : "");
+  chk.textContent = "✓";
+  chk.onclick = () => { node.done = !node.done; render(); };
+  row.appendChild(chk);
+
+  // title
+  const title = document.createElement("div");
+  title.className = "title" + (node.done ? " done" : "");
+  title.textContent = node.title;
+  title.onclick = () => { editingId = node.id; addChildTo = null; editorLevel = node.level; render(); };
+  row.appendChild(title);
+
+  // badge
+  const badge = document.createElement("span");
+  badge.className = "badge " + LEVELS[node.level].cls;
+  badge.textContent = LEVELS[node.level].label;
+  row.appendChild(badge);
+
+  // progress
+  const prog = document.createElement("div");
+  prog.className = "prog";
+  prog.innerHTML = '<div class="bar"><span style="width:'+p+'%"></span></div><div class="pct">'+p+'%</div>';
+  row.appendChild(prog);
+
+  // actions
+  const acts = document.createElement("div");
+  acts.className = "acts";
+  const plus = document.createElement("button");
+  plus.className = "iconbtn"; plus.textContent = "＋"; plus.title = "Добавить подпункт";
+  plus.onclick = (e) => { e.stopPropagation(); addChildTo = node.id; editingId = null; editorLevel = "day"; render(); };
+  const del = document.createElement("button");
+  del.className = "iconbtn"; del.textContent = "✕"; del.title = "Удалить";
+  del.onclick = (e) => {
+    e.stopPropagation();
+    if(!confirm('Удалить "'+node.title+'" и всё, что внутри?')) return;
+    const fp = findParent(node.id);
+    if(fp) fp.list.splice(fp.list.indexOf(fp.node),1);
+    render();
+  };
+  acts.appendChild(plus); acts.appendChild(del);
+  row.appendChild(acts);
+
+  wrap.appendChild(row);
+
+  // editor (rename)
+  if(editingId === node.id){
+    wrap.appendChild(renderEditor(node));
+  }
+
+  // children
+  if(hasKids){
+    const kids = document.createElement("div");
+    kids.className = "children" + (node.open ? "" : " hidden");
+    node.children.forEach(c => kids.appendChild(renderNode(c, depth+1)));
+    wrap.appendChild(kids);
+  }
+
+  // editor (add child)
+  if(addChildTo === node.id){
+    wrap.appendChild(renderAddChild(node));
+  }
+  return wrap;
+}
+
+function renderAddChild(parent){
+  const ed = document.createElement("div");
+  ed.className = "editor";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = "";
+  input.placeholder = "Название подпункта…";
+
+  const lrow = document.createElement("div");
+  lrow.className = "lrow";
+  lrow.innerHTML = '<span style="font-size:12px;color:var(--muted)">Уровень:</span>';
+  Object.keys(LEVELS).forEach(k=>{
+    const o = document.createElement("span");
+    o.className = "lvlopt" + (k===editorLevel ? " sel" : "");
+    o.dataset.lv = k;
+    o.textContent = LEVELS[k].label;
+    o.onclick = () => { editorLevel = k; ed.querySelectorAll(".lvlopt").forEach(x=>x.classList.toggle("sel", x.dataset.lv===k)); };
+    lrow.appendChild(o);
+  });
+
+  const erow = document.createElement("div");
+  erow.className = "erow";
+  const cancel = document.createElement("button");
+  cancel.className = "btn small"; cancel.textContent = "Отмена";
+  cancel.onclick = () => { addChildTo = null; render(); };
+  const ok = document.createElement("button");
+  ok.className = "btn small primary"; ok.textContent = "Добавить";
+  ok.onclick = () => {
+    const v = input.value.trim();
+    if(v){
+      parent.children.push({id:nid(), title:v, level:editorLevel, done:false, open:true, children:[]});
+      parent.open = true;
+    }
+    addChildTo = null;
+    render();
+  };
+  input.onkeydown = (e) => { if(e.key==="Enter") ok.onclick(); };
+  erow.appendChild(cancel); erow.appendChild(ok);
+
+  ed.appendChild(input);
+  ed.appendChild(lrow);
+  ed.appendChild(erow);
+  setTimeout(()=>input.focus(), 30);
+  return ed;
+}
+
+// add root
+$("#btnAddRoot").onclick = () => {
+  data.push({id:nid(), title:"Новая цель", level:"year", done:false, open:true, children:[]});
+  editingId = data[data.length-1].id;
+  editorLevel = "year";
+  render();
+};
+
+// export / import
+$("#btnExport").onclick = () => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  const d = new Date().toISOString().slice(0,10);
+  a.download = "planner-backup-"+d+".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast("Файл сохранён — храните его как резервную копию");
+};
+$("#btnImport").onclick = () => $("#fileImport").click();
+$("#fileImport").onchange = (e) => {
+  const f = e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try{
+      const arr = JSON.parse(r.result);
+      if(!Array.isArray(arr)) throw new Error();
+      if(!confirm("Заменить текущий планер данными из файла?")) return;
+      data = arr; save(); render();
+      toast("Импортировано");
+    }catch(err){ toast("Не удалось прочитать файл"); }
+  };
+  r.readAsText(f);
+  e.target.value = "";
+};
+
+let toastTimer;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 2600);
+}
+
+render();
+</script>
+</body>
+</html>
