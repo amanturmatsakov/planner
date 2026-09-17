@@ -15,7 +15,7 @@
   :root{
     --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
     --text:#e8eaf0; --muted:#8b93a7; --accent:#5b8cff; --good:#3ecf8e;
-    --warn:#f5b84f; --year:#a06bff; --q:#5b8cff; --m:#3ecf8e; --w:#f5b84f; --d:#8b93a7;
+    --warn:#f5b84f; --bad:#ff6b6b; --year:#a06bff; --q:#5b8cff; --m:#3ecf8e; --w:#f5b84f; --d:#8b93a7;
     --radius:14px;
   }
   *{box-sizing:border-box}
@@ -25,11 +25,11 @@
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     line-height:1.5; -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:860px;margin:0 auto;padding:20px 16px 80px}
+  .wrap{max-width:860px;margin:0 auto;padding:16px 14px 90px}
   header{
     position:sticky;top:0;z-index:20;
-    background:linear-gradient(180deg,var(--bg) 70%,rgba(15,17,21,0));
-    padding:14px 0 10px;margin-bottom:6px;
+    background:linear-gradient(180deg,var(--bg) 82%,rgba(15,17,21,0));
+    padding:12px 0 8px;margin-bottom:6px;
   }
   .topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   h1{font-size:20px;margin:0;letter-spacing:.2px}
@@ -46,15 +46,61 @@
   .btn.danger:hover{border-color:#ff6b6b;color:#ff9b9b}
   .btn.small{padding:4px 8px;font-size:12px;border-radius:8px}
   .hint{font-size:12px;color:var(--muted);margin:8px 2px 14px}
+  .lbl{color:var(--muted);font-size:12px;margin:14px 2px 6px;text-transform:uppercase;letter-spacing:.4px}
+  .hidden{display:none}
 
+  /* tabs */
+  .tabs{display:flex;gap:6px;margin-top:12px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;background:var(--panel);border:1px solid var(--line);color:var(--muted);
+    padding:7px 13px;border-radius:20px;font-size:13px;cursor:pointer;transition:.15s;
+  }
+  .tab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+
+  /* cards */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 14px 16px;margin-bottom:12px}
+  .card-h{font-size:15px;font-weight:700;margin-bottom:4px}
+
+  /* inputs */
+  .inp{
+    background:var(--bg);border:1px solid var(--line);color:var(--text);
+    padding:9px 11px;border-radius:9px;font-size:14px;width:100%;font-family:inherit;
+  }
+  .inp:focus{outline:none;border-color:var(--accent)}
+  .inp.date{width:auto;font-size:13px}
+  select.inp{appearance:none;-webkit-appearance:none}
+  .inprow{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
+  .inprow .inp{flex:1;min-width:0}
+
+  /* generic check row */
+  .chkrow{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line)}
+  .chkrow:last-child{border-bottom:none}
+  .chkrow .txt{flex:1;font-size:14px;min-width:0}
+  .chkrow .txt.done{color:var(--muted);text-decoration:line-through}
+  .chk{
+    width:22px;height:22px;flex:0 0 22px;border-radius:7px;border:2px solid var(--line);
+    cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;
+    transition:.12s;color:transparent;font-size:14px;line-height:1;user-select:none;
+  }
+  .chk.on{background:var(--good);border-color:var(--good);color:#08130d}
+  .iconbtn{
+    width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--muted);
+    cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  }
+  .iconbtn:hover{background:#2a2f3a;color:var(--text)}
+
+  .bar{height:8px;background:#2a2f3a;border-radius:6px;overflow:hidden;margin-top:8px}
+  .bar>span{display:block;height:100%;background:var(--good);border-radius:6px;transition:width .25s}
+  .bar.tall{height:12px}
+  .statline{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 2px}
+  .stat{font-size:13px;color:var(--muted)}
+  .stat b{color:var(--text);font-size:16px;font-variant-numeric:tabular-nums}
+
+  /* ===== goals tree ===== */
   .tree{display:flex;flex-direction:column;gap:8px}
-  .node{
-    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-    overflow:hidden;
-  }
-  .row{
-    display:flex;align-items:center;gap:8px;padding:10px 12px;
-  }
+  .node{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .row{display:flex;align-items:center;gap:8px;padding:10px 12px}
   .row:hover{background:var(--panel2)}
   .caret{
     width:22px;height:22px;flex:0 0 22px;display:flex;align-items:center;justify-content:center;
@@ -62,59 +108,30 @@
   }
   .caret:hover{background:#2a2f3a;color:var(--text)}
   .caret.leaf{visibility:hidden}
-  .chk{
-    width:20px;height:20px;flex:0 0 20px;border-radius:6px;border:2px solid var(--line);
-    cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;
-    transition:.12s;color:transparent;font-size:13px;line-height:1;
-  }
-  .chk.on{background:var(--good);border-color:var(--good);color:#08130d}
+  .chk.t{width:20px;height:20px;flex:0 0 20px;font-size:13px;border-radius:6px}
   .title{flex:1;font-size:14.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .title.done{color:var(--muted);text-decoration:line-through}
-  .badge{
-    font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.3px;
-    flex:0 0 auto;border:1px solid transparent;
-  }
+  .badge{font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.3px;flex:0 0 auto;border:1px solid transparent}
   .b-year{background:rgba(160,107,255,.15);color:var(--year);border-color:rgba(160,107,255,.35)}
   .b-quarter{background:rgba(91,140,255,.15);color:var(--q);border-color:rgba(91,140,255,.35)}
   .b-month{background:rgba(62,207,142,.15);color:var(--m);border-color:rgba(62,207,142,.35)}
   .b-week{background:rgba(245,184,79,.15);color:var(--w);border-color:rgba(245,184,79,.35)}
   .b-day{background:rgba(139,147,167,.15);color:var(--d);border-color:rgba(139,147,167,.35)}
-  .prog{flex:0 0 120px;display:flex;align-items:center;gap:8px}
-  .bar{flex:1;height:6px;background:#2a2f3a;border-radius:6px;overflow:hidden}
-  .bar>span{display:block;height:100%;background:var(--good);border-radius:6px;transition:width .25s}
+  .prog{flex:0 0 110px;display:flex;align-items:center;gap:8px}
+  .bar.thin{height:6px;margin-top:0}
   .pct{font-size:12px;color:var(--muted);width:38px;text-align:right;font-variant-numeric:tabular-nums}
   .acts{display:flex;gap:2px;flex:0 0 auto}
-  .iconbtn{
-    width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--muted);
-    cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;
-  }
-  .iconbtn:hover{background:#2a2f3a;color:var(--text)}
-  .children{
-    margin:0 0 8px 26px;padding-left:14px;border-left:2px solid var(--line);
-    display:flex;flex-direction:column;gap:8px;
-  }
+  .children{margin:0 0 8px 26px;padding-left:14px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:8px}
   .children.hidden{display:none}
-  .addchild{
-    margin:2px 0 8px 26px;padding-left:14px;border-left:2px solid transparent;
-  }
+  .addchild{margin:2px 0 8px 26px;padding-left:14px;border-left:2px solid transparent}
   .addchild .btn{opacity:.75}
   .addchild .btn:hover{opacity:1}
-
-  /* editor */
   .editor{
     background:var(--panel2);border:1px solid var(--line);border-radius:12px;
     padding:12px;margin:2px 0 8px 26px;display:flex;flex-direction:column;gap:10px;
   }
-  .editor input[type=text]{
-    background:var(--bg);border:1px solid var(--line);color:var(--text);
-    padding:9px 11px;border-radius:9px;font-size:14px;width:100%;
-  }
-  .editor input[type=text]:focus{outline:none;border-color:var(--accent)}
   .editor .lrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .lvlopt{
-    font-size:12px;padding:5px 10px;border-radius:20px;border:1px solid var(--line);
-    cursor:pointer;color:var(--muted);background:var(--panel);
-  }
+  .lvlopt{font-size:12px;padding:5px 10px;border-radius:20px;border:1px solid var(--line);cursor:pointer;color:var(--muted);background:var(--panel)}
   .lvlopt.sel{color:#fff;border-color:transparent}
   .lvlopt.sel[data-lv=year]{background:var(--year)}
   .lvlopt.sel[data-lv=quarter]{background:var(--q)}
@@ -122,29 +139,75 @@
   .lvlopt.sel[data-lv=week]{background:var(--w)}
   .lvlopt.sel[data-lv=day]{background:var(--d)}
   .editor .erow{display:flex;gap:8px;justify-content:flex-end}
+  .empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:14px;border:1px dashed var(--line);border-radius:var(--radius)}
+  .summary{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
+  .summary .big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+  .summary .lbl{margin-top:0}
 
-  .empty{
-    text-align:center;color:var(--muted);padding:50px 20px;font-size:14px;
-    border:1px dashed var(--line);border-radius:var(--radius);
-  }
+  /* ===== day ===== */
+  .dayhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .daydate{font-size:16px;font-weight:700}
+  .dayscore{font-size:13px;color:var(--muted);white-space:nowrap}
+  .dayscore b{color:var(--good);font-size:16px}
+
+  /* ===== 12 weeks ===== */
+  .weekrow{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line)}
+  .weekrow:last-child{border-bottom:none}
+  .wknum{flex:0 0 52px;font-size:12px;color:var(--muted);font-weight:700}
+  .weekrow.now .wknum{color:var(--w)}
+  .wkgoal{flex:1;font-size:13.5px;min-width:0}
+  .wkgoal.done{color:var(--muted);text-decoration:line-through}
+  .wkdates{flex:0 0 auto;font-size:11px;color:var(--muted)}
+  .cycle-done{background:rgba(62,207,142,.12);border:1px solid rgba(62,207,142,.4);color:var(--good);border-radius:10px;padding:10px 12px;font-size:13px;margin:10px 0}
+
+  /* ===== habits ===== */
+  .hgrid{display:flex;flex-direction:column;gap:8px}
+  .hhead,.hrow{display:grid;grid-template-columns:1fr repeat(7,34px) 44px;gap:4px;align-items:center}
+  .hhead{font-size:11px;color:var(--muted);text-align:center;padding:0 2px 4px}
+  .hhead .hname{text-align:left}
+  .hrow{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 6px}
+  .hname{font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+  .hname:hover{color:var(--accent)}
+  .hcell{width:30px;height:30px;margin:0 auto;border-radius:8px;border:1.5px solid var(--line);cursor:pointer;display:flex;align-items:center;justify-content:center;color:transparent;font-size:14px;transition:.12s}
+  .hcell.on{background:var(--good);border-color:var(--good);color:#08130d}
+  .hcell.future{opacity:.3;cursor:default}
+  .hstreak{text-align:center;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .hstreak.hot{color:var(--warn)}
+  .hmiss{font-size:11px;color:var(--bad);text-align:center}
+  .hmeta{font-size:11.5px;color:var(--muted);padding:0 4px 6px 2px;line-height:1.45}
+
+  /* ===== skill 20h ===== */
+  .cells20{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin:10px 0}
+  .cell{aspect-ratio:1;border-radius:8px;border:1.5px solid var(--line);background:var(--panel2)}
+  .cell.on{background:var(--good);border-color:var(--good)}
+  .sess{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line);font-size:13.5px}
+  .sess:last-child{border-bottom:none}
+  .sess .sd{flex:0 0 84px;color:var(--muted);font-size:12.5px}
+  .sess .sm{flex:1;font-variant-numeric:tabular-nums}
+
+  /* ===== kizen ===== */
+  .kz-entry{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+  .kz-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .kz-date{font-size:11.5px;color:var(--muted)}
+  .kz-text{font-size:13.5px}
+  .kz-form{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+  .kz-form .lrow{display:flex;gap:8px;flex-wrap:wrap}
+  .kz-form .lrow .inp{flex:1;min-width:120px}
+
   .toast{
     position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
     background:var(--panel2);border:1px solid var(--line);color:var(--text);
     padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;
-    transition:.25s;z-index:50;
+    transition:.25s;z-index:50;max-width:90vw;text-align:center;
   }
   .toast.show{opacity:1}
-  .summary{
-    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-    padding:14px 16px;margin-bottom:16px;
-  }
-  .summary .big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
-  .summary .lbl{color:var(--muted);font-size:12.5px;margin-bottom:6px}
-  .summary .bar{height:8px;margin-top:8px}
   @media(max-width:560px){
-    .prog{flex-basis:92px}
+    .prog{flex-basis:88px}
     .title{font-size:13.5px}
-    .acts .iconbtn:nth-child(n+3){display:none}
+    .acts .iconbtn:nth-child(n+2){display:none}
+    .hhead,.hrow{grid-template-columns:1fr repeat(7,30px) 40px}
+    .hcell{width:26px;height:26px}
+    .wkdates{display:none}
   }
 </style>
 </head>
@@ -154,31 +217,146 @@
     <div class="topbar">
       <div>
         <h1>🎯 Планер</h1>
-        <div class="sub">Дерево целей · год → квартал → месяц → неделя → день</div>
+        <div class="sub">Цели · День · 12 недель · Привычки · Навык · Кайзен</div>
       </div>
       <div class="spacer"></div>
-      <button class="btn" id="btnExport">⬇ Экспорт</button>
-      <button class="btn" id="btnImport">⬆ Импорт</button>
+      <button class="btn" id="btnExport">⬇</button>
+      <button class="btn" id="btnImport">⬆</button>
       <input type="file" id="fileImport" accept="application/json" style="display:none">
     </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab" data-tab="day">☀️ День</button>
+      <button class="tab" data-tab="goals">🎯 Цели</button>
+      <button class="tab" data-tab="cycle">📆 12 недель</button>
+      <button class="tab" data-tab="habits">🌱 Привычки</button>
+      <button class="tab" data-tab="skill">📚 Навык 20ч</button>
+      <button class="tab" data-tab="kizen">🔄 Кайзен</button>
+    </nav>
   </header>
 
-  <div class="summary" id="summary" style="display:none">
-    <div class="lbl">Общий прогресс по всем целям</div>
-    <div class="big" id="sumPct">0%</div>
-    <div class="bar"><span id="sumBar" style="width:0%"></span></div>
-  </div>
+  <!-- ============ DAY ============ -->
+  <section id="tab-day">
+    <div class="card">
+      <div class="dayhead">
+        <div class="daydate" id="dayDate"></div>
+        <div class="dayscore">день: <b id="dayScore">0%</b></div>
+      </div>
+      <div class="lbl">🧘 Якоря детокса (5 галочек)</div>
+      <div id="anchors"></div>
+      <div class="lbl">🐸 Фрог — самая неприятная задача (сделать первой, до соцсетей)</div>
+      <div class="chkrow">
+        <div class="chk" id="frogChk">✓</div>
+        <input class="inp" id="frogInp" placeholder="Что сегодня фрог?" style="flex:1">
+      </div>
+      <div class="lbl">🎯 Top 3 дня</div>
+      <div id="top3"></div>
+      <div class="lbl">📝 Остальные задачи</div>
+      <div id="tasks"></div>
+      <button class="btn small" id="btnAddTask" style="margin-top:8px">＋ Добавить задачу</button>
+      <div class="lbl">🌙 Вечер (3 мин): одно улучшение на завтра — кайзен</div>
+      <input class="inp" id="kizenInp" placeholder="Что я улучшу завтра?">
+    </div>
+  </section>
 
-  <div class="hint">Галочки ставь на задачах (день). Процент считается сам и поднимается наверх: день → неделя → месяц → квартал → год. Клик по названию — переименовать, «+» — добавить подпункт.</div>
+  <!-- ============ GOALS ============ -->
+  <section id="tab-goals" class="hidden">
+    <div class="summary" id="summary" style="display:none">
+      <div class="lbl">Общий прогресс по всем целям</div>
+      <div class="big" id="sumPct">0%</div>
+      <div class="bar"><span id="sumBar" style="width:0%"></span></div>
+    </div>
+    <div class="hint">Галочки ставь на задачах (день). Процент считается сам и поднимается наверх: день → неделя → месяц → квартал → год. Клик по названию — переименовать, «＋» — добавить подпункт.</div>
+    <div class="tree" id="tree"></div>
+    <div style="margin-top:14px">
+      <button class="btn primary" id="btnAddRoot">＋ Добавить цель</button>
+    </div>
+  </section>
 
-  <div class="tree" id="tree"></div>
-  <div style="margin-top:14px">
-    <button class="btn primary" id="btnAddRoot">＋ Добавить цель</button>
-  </div>
+  <!-- ============ 12 WEEKS ============ -->
+  <section id="tab-cycle" class="hidden">
+    <div class="card">
+      <div class="card-h">📆 12 недель в году</div>
+      <div class="sub">Год = 4 цикла по 12 недель. Каждый цикл — проект с дедлайном: убивает «впереди ещё много времени». 12 недель ≈ 1 год по ощущению.</div>
+      <div id="cycleDone" class="cycle-done hidden">🎉 Цикл завершён! Сделай ретро (что сработало / что нет / что меняю) и начни новый.</div>
+      <div class="statline" id="cycleStats"></div>
+      <div class="lbl">Время цикла</div>
+      <div class="bar"><span id="cycleTimeBar" style="width:0%"></span></div>
+      <div class="lbl">Выполнение цикла (недели закрыты)</div>
+      <div class="bar"><span id="cycleDoneBar" style="width:0%"></span></div>
+      <div class="inprow" style="margin-top:12px">
+        <span style="font-size:13px;color:var(--muted)">Старт цикла:</span>
+        <input type="date" id="cycleStart" class="inp date">
+      </div>
+      <div class="lbl">Фокус цикла (макс. 3)</div>
+      <div id="cycleFocus"></div>
+      <div class="lbl">Недели</div>
+      <div id="cycleWeeks"></div>
+      <button class="btn danger" id="btnNewCycle" style="margin-top:14px">Начать новый цикл (сбросить недели)</button>
+    </div>
+  </section>
+
+  <!-- ============ HABITS ============ -->
+  <section id="tab-habits" class="hidden">
+    <div class="card">
+      <div class="card-h">🌱 Привычки — атомные привычки</div>
+      <div class="sub">Правило: не пропускай дважды. Средний срок формирования — 66 дней. Клик по названию — редактировать (идентичность, стопка, версия 2 минут).</div>
+      <div class="hgrid" id="habitGrid"></div>
+      <button class="btn primary" id="btnAddHabit" style="margin-top:12px">＋ Добавить привычку</button>
+    </div>
+  </section>
+
+  <!-- ============ SKILL 20H ============ -->
+  <section id="tab-skill" class="hidden">
+    <div class="card">
+      <div class="card-h">📚 Навык — метод 20 часов</div>
+      <div class="sub">Джош Кауфман: ~20 часов целенаправленной практики = навык «достаточно хороший». Не «идеально», а рабочий.</div>
+      <div class="lbl">Навык</div>
+      <input class="inp" id="skillName" placeholder="Что осваиваешь?">
+      <div class="lbl">Поднавыки (разбей на 4–5)</div>
+      <div id="subskills"></div>
+      <button class="btn small" id="btnAddSub" style="margin-top:8px">＋ Поднавык</button>
+      <div class="lbl">Прогресс: <span id="skillTotal" style="color:var(--text)">0</span> / 20 часов</div>
+      <div class="bar tall"><span id="skillBar" style="width:0%"></span></div>
+      <div class="cells20" id="cells20"></div>
+      <div class="lbl">Сессии</div>
+      <div id="sessions"></div>
+      <div class="inprow">
+        <input type="date" id="sessDate" class="inp date">
+        <input type="number" id="sessMin" class="inp" placeholder="мин" min="5" step="5" style="max-width:90px">
+        <button class="btn primary small" id="btnAddSess">＋ Сессия</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KAIZEN ============ -->
+  <section id="tab-kizen" class="hidden">
+    <div class="card">
+      <div class="card-h">🔄 Кайзен — непрерывное улучшение</div>
+      <div class="sub">Лучше на 1% каждый день. День → 1 микроулучшение. Неделя → 1 в ретро. Месяц → 1 изменение в системе.</div>
+      <div class="kz-form">
+        <input class="inp" id="kzText" placeholder="Что улучшу?">
+        <div class="lrow">
+          <select class="inp" id="kzLevel">
+            <option value="день">День</option>
+            <option value="неделя">Неделя</option>
+            <option value="месяц">Месяц</option>
+          </select>
+          <select class="inp" id="kzModule">
+            <option value="цели">Цели</option>
+            <option value="привычки">Привычки</option>
+            <option value="детокс">Детокс</option>
+            <option value="навык">Навык</option>
+            <option value="другое">Другое</option>
+          </select>
+        </div>
+        <button class="btn primary" id="btnAddKz">Добавить в журнал</button>
+      </div>
+      <div id="kzList"></div>
+    </div>
+  </section>
 </div>
-<div class="toast" id="toast"></div>
-<script>
-const LS_KEY = "planner.v1";
+<div class="toast" id="toast"></div><script>
+const LS_KEY = "planner.v2";
 const LEVELS = {
   year:{label:"Год", cls:"b-year"},
   quarter:{label:"Квартал", cls:"b-quarter"},
@@ -186,78 +364,201 @@ const LEVELS = {
   week:{label:"Неделя", cls:"b-week"},
   day:{label:"День", cls:"b-day"}
 };
+const ANCHORS = [
+  "Первый час дня — без телефона",
+  "Цифровой закат: экраны off за час до сна",
+  "Соцсети — только после 1 блока работы",
+  "Дорогой дофамин первым (спорт/чтение/прогулка)",
+  "10 минут скуки без стимулов"
+];
+const WD = ["Вс","Пн","Вт","Ср","Чт","Пт","Сб"];
+const MON = ["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"];
+
 let uid = 0;
 const nid = () => "n" + Date.now().toString(36) + (uid++).toString(36);
+const todayISO = () => { const d = new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+const addDays = (iso, n) => { const d = new Date(iso+"T00:00:00"); d.setDate(d.getDate()+n); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+const fmtShort = iso => { const [y,m,d] = iso.split("-"); return d+" "+MON[+m-1]; };
 
 function seed(){
   const mk = (title, level, done, children) => ({id:nid(), title, level, done:!!done, open:true, children:children||[]});
-  return [
-    mk("🦷 Вылечить зубы (дедлайн: ноябрь 2026)", "year", false, [
-      mk("Q3 2026 (сен–окт): осмотр и план лечения", "quarter", false, [
-        mk("Сентябрь: осмотр + панорамный снимок, план лечения", "month", false, [
-          mk("Неделя 14–20 сентября: записаться и осмотр", "week", false, [
-            mk("Записаться к стоматологу (осмотр)", "day"),
-            mk("Панорамный снимок (ОПГ)", "day"),
-            mk("Получить план лечения + стоимость", "day")
-          ]),
-          mk("Неделя 21–27 сентября: старт лечения", "week", false, [
-            mk("Первый приём — начать лечение", "day")
+  return {
+    goals: [
+      mk("🦷 Вылечить зубы (дедлайн: ноябрь 2026)", "year", false, [
+        mk("Q3 2026 (сен–окт): осмотр и план лечения", "quarter", false, [
+          mk("Сентябрь: осмотр + панорамный снимок, план лечения", "month", false, [
+            mk("Неделя 14–20 сентября: записаться и осмотр", "week", false, [
+              mk("Записаться к стоматологу (осмотр)", "day"),
+              mk("Панорамный снимок (ОПГ)", "day"),
+              mk("Получить план лечения + стоимость", "day")
+            ]),
+            mk("Неделя 21–27 сентября: старт лечения", "week", false, [
+              mk("Первый приём — начать лечение", "day")
+            ])
+          ])
+        ]),
+        mk("Q4 2026 (ноябрь): завершение", "quarter", false, [
+          mk("Ноябрь: завершить лечение + контроль", "month", false, [
+            mk("Неделя 2–8 ноября: финал", "week", false, [
+              mk("Завершить основное лечение", "day"),
+              mk("Контрольный осмотр — подтвердить, что всё закрыто", "day")
+            ])
           ])
         ])
       ]),
-      mk("Q4 2026 (ноябрь): завершение", "quarter", false, [
-        mk("Ноябрь: завершить лечение + контроль", "month", false, [
-          mk("Неделя 2–8 ноября: финал", "week", false, [
-            mk("Завершить основное лечение", "day"),
-            mk("Контрольный осмотр — подтвердить, что всё закрыто", "day")
+      mk("🫆 Вылечить бронхит (дедлайн: конец сентября 2026)", "year", false, [
+        mk("Q3 2026: диагностика и лечение", "quarter", false, [
+          mk("Сентябрь: лечение", "month", false, [
+            mk("Неделя 14–20 сентября: диагностика и старт", "week", false, [
+              mk("Врач (терапевт) — диагноз и схема лечения", "day"),
+              mk("Рентген грудной клетки (если назначит врач)", "day"),
+              mk("Начать лечение по схеме врача", "day")
+            ]),
+            mk("Неделя 21–27 сентября: довести до конца", "week", false, [
+              mk("Продолжить лечение, отслеживать симптомы", "day"),
+              mk("Контроль у врача — подтвердить выздоровление", "day")
+            ])
           ])
         ])
       ])
-    ]),
-    mk("🫆 Вылечить бронхит (дедлайн: конец сентября 2026)", "year", false, [
-      mk("Q3 2026: диагностика и лечение", "quarter", false, [
-        mk("Сентябрь: лечение", "month", false, [
-          mk("Неделя 14–20 сентября: диагностика и старт", "week", false, [
-            mk("Врач (терапевт) — диагноз и схема лечения", "day"),
-            mk("Рентген грудной клетки (если назначит врач)", "day"),
-            mk("Начать лечение по схеме врача", "day")
-          ]),
-          mk("Неделя 21–27 сентября: довести до конца", "week", false, [
-            mk("Продолжить лечение, отслеживать симптомы", "day"),
-            mk("Контроль у врача — подтвердить выздоровление", "day")
-          ])
-        ])
-      ])
-    ])
-  ];
+    ],
+    days: {},
+    habits: [
+      {id:nid(), name:"Чтение 20 минут", identity:"Я — человек, который читает каждый день", stack:"После утреннего кофе", twoMin:"1 страница", days:{}},
+      {id:nid(), name:"Без телефона утром", identity:"Я — человек, который не скроллит утром", stack:"Проснулся → сразу вода", twoMin:"10 минут без экрана", days:{}}
+    ],
+    skill: { name:"", subskills:[""], sessions:[] },
+    cycle: { start: todayISO(), focus:["","",""], weeks: Array.from({length:12},()=>({done:false, goal:""})) },
+    kizen: []
+  };
 }
 
-let data = load();
-function load(){
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    if(raw) return JSON.parse(raw);
-  }catch(e){}
-  return seed();
-}
-function save(){
-  try{ localStorage.setItem(LS_KEY, JSON.stringify(data)); }catch(e){}
-}
-
-function pct(node){
-  if(!node.children || node.children.length===0) return node.done ? 100 : 0;
-  const s = node.children.reduce((a,c)=>a+pct(c),0);
-  return Math.round(s / node.children.length);
-}
+let data;
+try{
+  const raw = localStorage.getItem(LS_KEY);
+  data = raw ? JSON.parse(raw) : seed();
+  if(Array.isArray(data)){
+    const s = seed(); s.goals = data; data = s;
+  }
+}catch(e){ data = seed(); }
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(data)); }catch(e){} }
 
 const $ = sel => document.querySelector(sel);
-const treeEl = $("#tree");
-let editingId = null;   // node id currently in editor
-let addChildTo = null;  // parent id: editor is in "add child" mode
+let toastTimer;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 2600);
+}
+
+/* ================= DAY ================= */
+function dayData(){
+  const t = todayISO();
+  if(!data.days[t]){
+    data.days[t] = {anchors:[false,false,false,false,false], frog:"", frogDone:false, top3:["","",""], tasks:[], kizen:""};
+  }
+  return data.days[t];
+}
+
+function renderDay(){
+  const d = dayData();
+  const now = new Date();
+  $("#dayDate").textContent = WD[now.getDay()] + ", " + now.getDate() + " " + MON[now.getMonth()] + " " + now.getFullYear();
+
+  const aEl = $("#anchors");
+  aEl.innerHTML = "";
+  ANCHORS.forEach((a,i)=>{
+    const row = document.createElement("div");
+    row.className = "chkrow";
+    const chk = document.createElement("div");
+    chk.className = "chk" + (d.anchors[i] ? " on" : "");
+    chk.textContent = "✓";
+    chk.onclick = () => { d.anchors[i] = !d.anchors[i]; save(); renderDay(); };
+    const txt = document.createElement("div");
+    txt.className = "txt" + (d.anchors[i] ? " done" : "");
+    txt.textContent = a;
+    row.appendChild(chk); row.appendChild(txt);
+    aEl.appendChild(row);
+  });
+
+  const fchk = $("#frogChk");
+  fchk.className = "chk" + (d.frogDone ? " on" : "");
+  fchk.onclick = () => { d.frogDone = !d.frogDone; save(); renderDay(); };
+  const finp = $("#frogInp");
+  finp.value = d.frog;
+  finp.oninput = () => { d.frog = finp.value; save(); };
+
+  const t3 = $("#top3");
+  t3.innerHTML = "";
+  d.top3.forEach((v,i)=>{
+    const row = document.createElement("div");
+    row.className = "chkrow";
+    const chk = document.createElement("div");
+    chk.className = "chk" + (v ? " on" : "");
+    chk.textContent = "✓";
+    chk.onclick = () => { d.top3[i] = d.top3[i] ? "" : ("Задача " + (i+1)); save(); renderDay(); };
+    const inp = document.createElement("input");
+    inp.className = "inp";
+    inp.style.flex = "1";
+    inp.placeholder = "Задача " + (i+1);
+    inp.value = v;
+    inp.oninput = () => { d.top3[i] = inp.value; save(); };
+    row.appendChild(chk); row.appendChild(inp);
+    t3.appendChild(row);
+  });
+
+  const tEl = $("#tasks");
+  tEl.innerHTML = "";
+  if(!d.tasks.length){
+    tEl.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:4px">Нет задач — добавь ниже.</div>';
+  }
+  d.tasks.forEach((t,i)=>{
+    const row = document.createElement("div");
+    row.className = "chkrow";
+    const chk = document.createElement("div");
+    chk.className = "chk" + (t.done ? " on" : "");
+    chk.textContent = "✓";
+    chk.onclick = () => { t.done = !t.done; save(); renderDay(); };
+    const txt = document.createElement("div");
+    txt.className = "txt" + (t.done ? " done" : "");
+    txt.textContent = t.text;
+    const del = document.createElement("button");
+    del.className = "iconbtn"; del.textContent = "✕";
+    del.onclick = () => { d.tasks.splice(i,1); save(); renderDay(); };
+    row.appendChild(chk); row.appendChild(txt); row.appendChild(del);
+    tEl.appendChild(row);
+  });
+
+  const k = $("#kizenInp");
+  k.value = d.kizen;
+  k.oninput = () => { d.kizen = k.value; save(); };
+
+  let total = 9 + d.tasks.length, done = 0;
+  d.anchors.forEach(a => a && done++);
+  if(d.frogDone) done++;
+  d.top3.forEach(t => t && done++);
+  d.tasks.forEach(t => t.done && done++);
+  const p = total ? Math.round(done/total*100) : 0;
+  $("#dayScore").innerHTML = "день: <b>" + p + "%</b>";
+}
+
+$("#btnAddTask").onclick = () => {
+  const v = prompt("Новая задача:");
+  if(v && v.trim()){
+    dayData().tasks.push({text:v.trim(), done:false});
+    save(); renderDay();
+  }
+};
+
+/* ================= GOALS TREE ================= */
+let editingId = null;
+let addChildTo = null;
 let editorLevel = "day";
 
 function findNode(id, list){
-  for(const n of list||data){
+  for(const n of list||data.goals){
     if(n.id===id) return n;
     const f = findNode(id, n.children);
     if(f) return f;
@@ -265,34 +566,36 @@ function findNode(id, list){
   return null;
 }
 function findParent(id, list, parent){
-  for(const n of list||data){
-    if(n.id===id) return {list:list||data, node:n, parent};
+  for(const n of list||data.goals){
+    if(n.id===id) return {list:list||data.goals, node:n, parent};
     const f = findParent(id, n.children, n);
     if(f) return f;
   }
   return null;
 }
+function pct(node){
+  if(!node.children || node.children.length===0) return node.done ? 100 : 0;
+  const s = node.children.reduce((a,c)=>a+pct(c),0);
+  return Math.round(s / node.children.length);
+}
 
-function render(){
+function renderGoals(){
+  const treeEl = $("#tree");
   treeEl.innerHTML = "";
-  if(!data.length){
+  if(!data.goals.length){
     treeEl.innerHTML = '<div class="empty">Пока пусто. Добавь первую цель кнопкой ниже.</div>';
   }
-  data.forEach(n => treeEl.appendChild(renderNode(n, 0)));
-  renderSummary();
+  data.goals.forEach(n => treeEl.appendChild(renderNode(n)));
+  const el = $("#summary");
+  if(!data.goals.length){ el.style.display="none"; return; }
+  el.style.display = "block";
+  const p = Math.round(data.goals.reduce((a,c)=>a+pct(c),0)/data.goals.length);
+  $("#sumPct").textContent = p + "%";
+  $("#sumBar").style.width = p + "%";
   save();
 }
 
-function renderSummary(){
-  const el = $("#summary");
-  if(!data.length){ el.style.display="none"; return; }
-  el.style.display = "block";
-  const p = Math.round(data.reduce((a,c)=>a+pct(c),0)/data.length);
-  $("#sumPct").textContent = p + "%";
-  $("#sumBar").style.width = p + "%";
-}
-
-function renderNode(node, depth){
+function renderNode(node){
   const wrap = document.createElement("div");
   wrap.className = "node";
   const p = pct(node);
@@ -301,45 +604,39 @@ function renderNode(node, depth){
   const row = document.createElement("div");
   row.className = "row";
 
-  // caret
   const caret = document.createElement("div");
   caret.className = "caret" + (hasKids ? "" : " leaf");
   caret.textContent = node.open ? "▾" : "▸";
-  caret.onclick = () => { if(hasKids){ node.open = !node.open; render(); } };
+  caret.onclick = () => { if(hasKids){ node.open = !node.open; renderGoals(); } };
   row.appendChild(caret);
 
-  // checkbox
   const chk = document.createElement("div");
-  chk.className = "chk" + (node.done ? " on" : "");
+  chk.className = "chk t" + (node.done ? " on" : "");
   chk.textContent = "✓";
-  chk.onclick = () => { node.done = !node.done; render(); };
+  chk.onclick = () => { node.done = !node.done; renderGoals(); };
   row.appendChild(chk);
 
-  // title
   const title = document.createElement("div");
   title.className = "title" + (node.done ? " done" : "");
   title.textContent = node.title;
-  title.onclick = () => { editingId = node.id; addChildTo = null; editorLevel = node.level; render(); };
+  title.onclick = () => { editingId = node.id; addChildTo = null; editorLevel = node.level; renderGoals(); };
   row.appendChild(title);
 
-  // badge
   const badge = document.createElement("span");
   badge.className = "badge " + LEVELS[node.level].cls;
   badge.textContent = LEVELS[node.level].label;
   row.appendChild(badge);
 
-  // progress
   const prog = document.createElement("div");
   prog.className = "prog";
-  prog.innerHTML = '<div class="bar"><span style="width:'+p+'%"></span></div><div class="pct">'+p+'%</div>';
+  prog.innerHTML = '<div class="bar thin"><span style="width:'+p+'%"></span></div><div class="pct">'+p+'%</div>';
   row.appendChild(prog);
 
-  // actions
   const acts = document.createElement("div");
   acts.className = "acts";
   const plus = document.createElement("button");
   plus.className = "iconbtn"; plus.textContent = "＋"; plus.title = "Добавить подпункт";
-  plus.onclick = (e) => { e.stopPropagation(); addChildTo = node.id; editingId = null; editorLevel = "day"; render(); };
+  plus.onclick = (e) => { e.stopPropagation(); addChildTo = node.id; editingId = null; editorLevel = "day"; renderGoals(); };
   const del = document.createElement("button");
   del.className = "iconbtn"; del.textContent = "✕"; del.title = "Удалить";
   del.onclick = (e) => {
@@ -347,31 +644,67 @@ function renderNode(node, depth){
     if(!confirm('Удалить "'+node.title+'" и всё, что внутри?')) return;
     const fp = findParent(node.id);
     if(fp) fp.list.splice(fp.list.indexOf(fp.node),1);
-    render();
+    renderGoals();
   };
   acts.appendChild(plus); acts.appendChild(del);
   row.appendChild(acts);
 
   wrap.appendChild(row);
 
-  // editor (rename)
   if(editingId === node.id){
     wrap.appendChild(renderEditor(node));
   }
 
-  // children
   if(hasKids){
     const kids = document.createElement("div");
     kids.className = "children" + (node.open ? "" : " hidden");
-    node.children.forEach(c => kids.appendChild(renderNode(c, depth+1)));
+    node.children.forEach(c => kids.appendChild(renderNode(c)));
     wrap.appendChild(kids);
   }
 
-  // editor (add child)
   if(addChildTo === node.id){
     wrap.appendChild(renderAddChild(node));
   }
   return wrap;
+}
+
+function renderEditor(node){
+  const ed = document.createElement("div");
+  ed.className = "editor";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = node.title;
+  const lrow = document.createElement("div");
+  lrow.className = "lrow";
+  lrow.innerHTML = '<span style="font-size:12px;color:var(--muted)">Уровень:</span>';
+  Object.keys(LEVELS).forEach(k=>{
+    const o = document.createElement("span");
+    o.className = "lvlopt" + (k===node.level ? " sel" : "");
+    o.dataset.lv = k;
+    o.textContent = LEVELS[k].label;
+    o.onclick = () => { node.level = k; ed.querySelectorAll(".lvlopt").forEach(x=>x.classList.toggle("sel", x.dataset.lv===k)); };
+    lrow.appendChild(o);
+  });
+  const erow = document.createElement("div");
+  erow.className = "erow";
+  const cancel = document.createElement("button");
+  cancel.className = "btn small"; cancel.textContent = "Отмена";
+  cancel.onclick = () => { editingId = null; renderGoals(); };
+  const ok = document.createElement("button");
+  ok.className = "btn small primary"; ok.textContent = "Сохранить";
+  ok.onclick = () => {
+    const v = input.value.trim();
+    if(v) node.title = v;
+    editingId = null;
+    renderGoals();
+  };
+  input.onkeydown = (e) => { if(e.key==="Enter") ok.onclick(); };
+  erow.appendChild(cancel); erow.appendChild(ok);
+  ed.appendChild(input);
+  ed.appendChild(lrow);
+  ed.appendChild(erow);
+  setTimeout(()=>{ input.focus(); input.select(); }, 30);
+  return ed;
 }
 
 function renderAddChild(parent){
@@ -379,9 +712,7 @@ function renderAddChild(parent){
   ed.className = "editor";
   const input = document.createElement("input");
   input.type = "text";
-  input.value = "";
   input.placeholder = "Название подпункта…";
-
   const lrow = document.createElement("div");
   lrow.className = "lrow";
   lrow.innerHTML = '<span style="font-size:12px;color:var(--muted)">Уровень:</span>';
@@ -393,12 +724,11 @@ function renderAddChild(parent){
     o.onclick = () => { editorLevel = k; ed.querySelectorAll(".lvlopt").forEach(x=>x.classList.toggle("sel", x.dataset.lv===k)); };
     lrow.appendChild(o);
   });
-
   const erow = document.createElement("div");
   erow.className = "erow";
   const cancel = document.createElement("button");
   cancel.className = "btn small"; cancel.textContent = "Отмена";
-  cancel.onclick = () => { addChildTo = null; render(); };
+  cancel.onclick = () => { addChildTo = null; renderGoals(); };
   const ok = document.createElement("button");
   ok.className = "btn small primary"; ok.textContent = "Добавить";
   ok.onclick = () => {
@@ -408,11 +738,10 @@ function renderAddChild(parent){
       parent.open = true;
     }
     addChildTo = null;
-    render();
+    renderGoals();
   };
   input.onkeydown = (e) => { if(e.key==="Enter") ok.onclick(); };
   erow.appendChild(cancel); erow.appendChild(ok);
-
   ed.appendChild(input);
   ed.appendChild(lrow);
   ed.appendChild(erow);
@@ -420,24 +749,331 @@ function renderAddChild(parent){
   return ed;
 }
 
-// add root
 $("#btnAddRoot").onclick = () => {
-  data.push({id:nid(), title:"Новая цель", level:"year", done:false, open:true, children:[]});
-  editingId = data[data.length-1].id;
+  data.goals.push({id:nid(), title:"Новая цель", level:"year", done:false, open:true, children:[]});
+  editingId = data.goals[data.goals.length-1].id;
   editorLevel = "year";
-  render();
+  renderGoals();
 };
 
-// export / import
+/* ================= 12 WEEKS ================= */
+function renderCycle(){
+  const c = data.cycle;
+  const today = todayISO();
+  const idx = Math.floor((new Date(today+"T00:00:00") - new Date(c.start+"T00:00:00")) / 86400000 / 7);
+  const weekNo = (idx >= 0 && idx < 12) ? idx : -1;
+
+  const doneWeeks = c.weeks.filter(w=>w.done).length;
+  const timePct = Math.min(100, Math.max(0, Math.round((idx+1)/12*100)));
+  $("#cycleStats").innerHTML =
+    '<div class="stat">Неделя: <b>' + (weekNo>=0 ? (weekNo+1) + " / 12" : "—") + '</b></div>' +
+    '<div class="stat">Закрыто: <b>' + doneWeeks + ' / 12</b></div>' +
+    '<div class="stat">Время цикла: <b>' + timePct + '%</b></div>';
+  $("#cycleTimeBar").style.width = timePct + "%";
+  $("#cycleDoneBar").style.width = Math.round(doneWeeks/12*100) + "%";
+  $("#cycleDone").classList.toggle("hidden", doneWeeks < 12);
+
+  const sd = $("#cycleStart");
+  if(document.activeElement !== sd) sd.value = c.start;
+  sd.onchange = () => { if(sd.value){ c.start = sd.value; save(); renderCycle(); } };
+
+  // focus
+  const fEl = $("#cycleFocus");
+  fEl.innerHTML = "";
+  c.focus.forEach((v,i)=>{
+    const inp = document.createElement("input");
+    inp.className = "inp";
+    inp.placeholder = "Фокус " + (i+1);
+    inp.value = v;
+    inp.style.marginBottom = "6px";
+    inp.oninput = () => { c.focus[i] = inp.value; save(); };
+    fEl.appendChild(inp);
+  });
+
+  // weeks
+  const wEl = $("#cycleWeeks");
+  wEl.innerHTML = "";
+  c.weeks.forEach((w,i)=>{
+    const row = document.createElement("div");
+    row.className = "weekrow" + (i===weekNo ? " now" : "");
+    const num = document.createElement("div");
+    num.className = "wknum";
+    num.textContent = "Нед. " + (i+1) + (i===weekNo ? " ◀" : "");
+    const dates = document.createElement("div");
+    dates.className = "wkdates";
+    dates.textContent = fmtShort(addDays(c.start, i*7)) + "–" + fmtShort(addDays(c.start, i*7+6));
+    const chk = document.createElement("div");
+    chk.className = "chk" + (w.done ? " on" : "");
+    chk.textContent = "✓";
+    chk.onclick = () => { w.done = !w.done; save(); renderCycle(); };
+    const inp = document.createElement("input");
+    inp.className = "inp";
+    inp.style.flex = "1";
+    inp.placeholder = "Цель недели " + (i+1);
+    inp.value = w.goal;
+    inp.oninput = () => { w.goal = inp.value; save(); };
+    row.appendChild(num); row.appendChild(inp); row.appendChild(dates); row.appendChild(chk);
+    wEl.appendChild(row);
+  });
+}
+
+$("#btnNewCycle").onclick = () => {
+  if(!confirm("Начать новый цикл? Недели и фокусы сбросятся (старт = сегодня).")) return;
+  data.cycle = { start: todayISO(), focus:["","",""], weeks: Array.from({length:12},()=>({done:false, goal:""})) };
+  save(); renderCycle();
+  toast("Новый цикл начат");
+};
+
+/* ================= HABITS ================= */
+let habitEditing = null;
+function habitStreak(h){
+  let s = 0;
+  let d = todayISO();
+  if(!h.days[d]) d = addDays(d, -1); // today not done yet — streak counts from yesterday
+  while(h.days[d]){ s++; d = addDays(d, -1); }
+  return s;
+}
+
+function renderHabits(){
+  const grid = $("#habitGrid");
+  grid.innerHTML = "";
+  const today = todayISO();
+  // header
+  const head = document.createElement("div");
+  head.className = "hhead";
+  head.innerHTML = '<div class="hname">Привычка</div>' + WD.map((w,i)=>'<div>'+(i===0?"Вс":"")+(i===1?"Пн":"")+(i===2?"Вт":"")+(i===3?"Ср":"")+(i===4?"Чт":"")+(i===5?"Пт":"")+(i===6?"Сб":"")+'</div>').join("") + '<div>Стрик</div>';
+  grid.appendChild(head);
+
+  data.habits.forEach(h=>{
+    const row = document.createElement("div");
+    row.className = "hrow";
+    const name = document.createElement("div");
+    name.className = "hname";
+    name.textContent = h.name;
+    name.title = "Нажми, чтобы редактировать";
+    name.onclick = () => { habitEditing = h.id; renderHabits(); };
+    row.appendChild(name);
+    for(let i=0;i<7;i++){
+      const iso = addDays(today, i-6); // last 7 days ending today
+      const cell = document.createElement("div");
+      const isFuture = iso > today;
+      cell.className = "hcell" + (h.days[iso] ? " on" : "") + (isFuture ? " future" : "");
+      cell.textContent = "✓";
+      if(!isFuture){
+        cell.onclick = () => { h.days[iso] = !h.days[iso]; save(); renderHabits(); };
+      }
+      row.appendChild(cell);
+    }
+    const st = habitStreak(h);
+    const stEl = document.createElement("div");
+    stEl.className = "hstreak" + (st >= 7 ? " hot" : "");
+    stEl.textContent = st + "🔥";
+    row.appendChild(stEl);
+    grid.appendChild(row);
+
+    // meta + delete
+    const meta = document.createElement("div");
+    meta.className = "hmeta";
+    meta.innerHTML =
+      (h.identity ? "👤 " + h.identity + "<br>" : "") +
+      (h.stack ? "🔗 " + h.stack + "<br>" : "") +
+      (h.twoMin ? "⏱ 2 мин: " + h.twoMin + "<br>" : "") +
+      (st >= 2 && !h.days[today] ? '<span class="hmiss">⚠ Не пропусти дважды — сегодня хотя бы версия 2 минут!</span>' : "");
+    const del = document.createElement("button");
+    del.className = "iconbtn"; del.textContent = "✕"; del.style.float = "right";
+    del.onclick = () => { if(confirm('Удалить привычку "'+h.name+'"?')){ data.habits = data.habits.filter(x=>x.id!==h.id); save(); renderHabits(); } };
+    meta.appendChild(del);
+    grid.appendChild(meta);
+
+    // editor
+    if(habitEditing === h.id){
+      const ed = document.createElement("div");
+      ed.className = "editor";
+      ed.style.margin = "4px 0 8px 0";
+      const fields = [
+        ["name","Привычка (коротко)"],
+        ["identity","Идентичность: «Я — человек, который…»"],
+        ["stack","Стопка: «После [старая привычка] я…»"],
+        ["twoMin","Версия 2 минут (минимум)"]
+      ];
+      fields.forEach(([k,ph])=>{
+        const inp = document.createElement("input");
+        inp.className = "inp";
+        inp.placeholder = ph;
+        inp.value = h[k] || "";
+        inp.oninput = () => { h[k] = inp.value; save(); };
+        ed.appendChild(inp);
+      });
+      const erow = document.createElement("div");
+      erow.className = "erow";
+      const done = document.createElement("button");
+      done.className = "btn small primary"; done.textContent = "Готово";
+      done.onclick = () => { habitEditing = null; renderHabits(); };
+      erow.appendChild(done);
+      ed.appendChild(erow);
+      grid.appendChild(ed);
+    }
+  });
+}
+
+$("#btnAddHabit").onclick = () => {
+  const v = prompt("Новая привычка:");
+  if(v && v.trim()){
+    data.habits.push({id:nid(), name:v.trim(), identity:"", stack:"", twoMin:"", days:{}});
+    habitEditing = data.habits[data.habits.length-1].id;
+    save(); renderHabits();
+  }
+};
+
+/* ================= SKILL 20H ================= */
+function skillMinutes(){
+  return data.skill.sessions.reduce((a,s)=>a+(+s.min||0),0);
+}
+function renderSkill(){
+  const s = data.skill;
+  const sn = $("#skillName");
+  if(document.activeElement !== sn){ sn.value = s.name; }
+  sn.oninput = () => { s.name = sn.value; save(); };
+
+  const ss = $("#subskills");
+  ss.innerHTML = "";
+  s.subskills.forEach((v,i)=>{
+    const inp = document.createElement("input");
+    inp.className = "inp";
+    inp.placeholder = "Поднавык " + (i+1);
+    inp.value = v;
+    inp.style.marginBottom = "6px";
+    inp.oninput = () => { s.subskills[i] = inp.value; save(); };
+    const del = document.createElement("button");
+    del.className = "iconbtn"; del.textContent = "✕";
+    del.onclick = () => { s.subskills.splice(i,1); save(); renderSkill(); };
+    const row = document.createElement("div");
+    row.style.display = "flex"; row.style.gap = "6px"; row.style.marginBottom = "6px";
+    inp.style.flex = "1";
+    row.appendChild(inp); row.appendChild(del);
+    ss.appendChild(row);
+  });
+
+  const min = skillMinutes();
+  const hours = Math.min(20, Math.floor(min/60));
+  $("#skillTotal").textContent = (min/60).toFixed(1).replace(".0","");
+  $("#skillBar").style.width = Math.min(100, min/1200*100) + "%";
+
+  const cells = $("#cells20");
+  cells.innerHTML = "";
+  for(let i=0;i<20;i++){
+    const c = document.createElement("div");
+    c.className = "cell" + (i < hours ? " on" : "");
+    c.title = "Час " + (i+1);
+    cells.appendChild(c);
+  }
+
+  const ses = $("#sessions");
+  ses.innerHTML = "";
+  if(!s.sessions.length){
+    ses.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:4px">Сессий пока нет.</div>';
+  }
+  s.sessions.slice().sort((a,b)=>a.date<b.date?1:-1).forEach((sess,i)=>{
+    const row = document.createElement("div");
+    row.className = "sess";
+    const sd = document.createElement("div");
+    sd.className = "sd";
+    sd.textContent = fmtShort(sess.date);
+    const sm = document.createElement("div");
+    sm.className = "sm";
+    sm.textContent = sess.min + " мин";
+    const del = document.createElement("button");
+    del.className = "iconbtn"; del.textContent = "✕";
+    const realIdx = s.sessions.indexOf(sess);
+    del.onclick = () => { s.sessions.splice(realIdx,1); save(); renderSkill(); };
+    row.appendChild(sd); row.appendChild(sm); row.appendChild(del);
+    ses.appendChild(row);
+  });
+
+  const sdInp = $("#sessDate");
+  if(document.activeElement !== sdInp) sdInp.value = todayISO();
+}
+
+$("#btnAddSub").onclick = () => { data.skill.subskills.push(""); save(); renderSkill(); };
+$("#btnAddSess").onclick = () => {
+  const date = $("#sessDate").value || todayISO();
+  const min = parseInt($("#sessMin").value, 10);
+  if(!min || min <= 0){ toast("Укажи длительность в минутах"); return; }
+  data.skill.sessions.push({id:nid(), date, min});
+  $("#sessMin").value = "";
+  save(); renderSkill();
+  const h = skillMinutes()/60;
+  if(h >= 20) toast("🎉 20 часов — навык рабочий!");
+};
+
+/* ================= KAIZEN ================= */
+function renderKizen(){
+  const list = $("#kzList");
+  list.innerHTML = "";
+  const items = data.kizen.slice().sort((a,b)=>a.date<b.date?1:-1);
+  if(!items.length){
+    list.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:4px">Журнал пуст. Запиши первое улучшение — сегодня.</div>';
+  }
+  items.forEach(it=>{
+    const el = document.createElement("div");
+    el.className = "kz-entry";
+    const top = document.createElement("div");
+    top.className = "kz-top";
+    const date = document.createElement("span");
+    date.className = "kz-date";
+    date.textContent = fmtShort(it.date) + " · " + it.level + " · " + it.module;
+    const del = document.createElement("button");
+    del.className = "iconbtn"; del.textContent = "✕";
+    del.onclick = () => { if(confirm("Удалить запись?")){ data.kizen = data.kizen.filter(x=>x.id!==it.id); save(); renderKizen(); } };
+    top.appendChild(date); top.appendChild(del);
+    const txt = document.createElement("div");
+    txt.className = "kz-text";
+    txt.textContent = it.text;
+    el.appendChild(top); el.appendChild(txt);
+    list.appendChild(el);
+  });
+}
+
+$("#btnAddKz").onclick = () => {
+  const v = $("#kzText").value.trim();
+  if(!v){ toast("Напиши, что улучшишь"); return; }
+  data.kizen.push({id:nid(), date:todayISO(), text:v, level:$("#kzLevel").value, module:$("#kzModule").value});
+  $("#kzText").value = "";
+  save(); renderKizen();
+};
+
+/* ================= TABS + INIT ================= */
+let currentTab = "day";
+function showTab(name){
+  currentTab = name;
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+  ["day","goals","cycle","habits","skill","kizen"].forEach(n => {
+    $("#tab-"+n).classList.toggle("hidden", n !== name);
+  });
+  renderAll();
+}
+document.querySelectorAll(".tab").forEach(t => {
+  t.onclick = () => showTab(t.dataset.tab);
+});
+
+function renderAll(){
+  if(currentTab === "day") renderDay();
+  else if(currentTab === "goals") renderGoals();
+  else if(currentTab === "cycle") renderCycle();
+  else if(currentTab === "habits") renderHabits();
+  else if(currentTab === "skill") renderSkill();
+  else if(currentTab === "kizen") renderKizen();
+}
+
+/* export / import (v2: whole state) */
 $("#btnExport").onclick = () => {
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  const d = new Date().toISOString().slice(0,10);
-  a.download = "planner-backup-"+d+".json";
+  a.download = "planner-backup-" + todayISO() + ".json";
   a.click();
   URL.revokeObjectURL(a.href);
-  toast("Файл сохранён — храните его как резервную копию");
+  toast("Файл сохранён — это резервная копия");
 };
 $("#btnImport").onclick = () => $("#fileImport").click();
 $("#fileImport").onchange = (e) => {
@@ -446,10 +1082,16 @@ $("#fileImport").onchange = (e) => {
   const r = new FileReader();
   r.onload = () => {
     try{
-      const arr = JSON.parse(r.result);
-      if(!Array.isArray(arr)) throw new Error();
+      const obj = JSON.parse(r.result);
+      const arr = Array.isArray(obj) ? obj : obj.goals;
+      if(!arr) throw new Error();
       if(!confirm("Заменить текущий планер данными из файла?")) return;
-      data = arr; save(); render();
+      if(Array.isArray(obj)){
+        const s = seed(); s.goals = obj; data = s;
+      } else {
+        data = obj;
+      }
+      save(); renderAll();
       toast("Импортировано");
     }catch(err){ toast("Не удалось прочитать файл"); }
   };
@@ -457,16 +1099,7 @@ $("#fileImport").onchange = (e) => {
   e.target.value = "";
 };
 
-let toastTimer;
-function toast(msg){
-  const t = $("#toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove("show"), 2600);
-}
-
-render();
+showTab("day");
 </script>
 </body>
 </html>
