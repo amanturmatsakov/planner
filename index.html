@@ -111,12 +111,6 @@
   .chk.t{width:20px;height:20px;flex:0 0 20px;font-size:13px;border-radius:6px}
   .title{flex:1;font-size:14.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .title.done{color:var(--muted);text-decoration:line-through}
-  .badge{font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.3px;flex:0 0 auto;border:1px solid transparent}
-  .b-year{background:rgba(160,107,255,.15);color:var(--year);border-color:rgba(160,107,255,.35)}
-  .b-quarter{background:rgba(91,140,255,.15);color:var(--q);border-color:rgba(91,140,255,.35)}
-  .b-month{background:rgba(62,207,142,.15);color:var(--m);border-color:rgba(62,207,142,.35)}
-  .b-week{background:rgba(245,184,79,.15);color:var(--w);border-color:rgba(245,184,79,.35)}
-  .b-day{background:rgba(139,147,167,.15);color:var(--d);border-color:rgba(139,147,167,.35)}
   .prog{flex:0 0 110px;display:flex;align-items:center;gap:8px}
   .bar.thin{height:6px;margin-top:0}
   .pct{font-size:12px;color:var(--muted);width:38px;text-align:right;font-variant-numeric:tabular-nums}
@@ -131,13 +125,6 @@
     padding:12px;margin:2px 0 8px 26px;display:flex;flex-direction:column;gap:10px;
   }
   .editor .lrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .lvlopt{font-size:12px;padding:5px 10px;border-radius:20px;border:1px solid var(--line);cursor:pointer;color:var(--muted);background:var(--panel)}
-  .lvlopt.sel{color:#fff;border-color:transparent}
-  .lvlopt.sel[data-lv=year]{background:var(--year)}
-  .lvlopt.sel[data-lv=quarter]{background:var(--q)}
-  .lvlopt.sel[data-lv=month]{background:var(--m)}
-  .lvlopt.sel[data-lv=week]{background:var(--w)}
-  .lvlopt.sel[data-lv=day]{background:var(--d)}
   .editor .erow{display:flex;gap:8px;justify-content:flex-end}
   .empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:14px;border:1px dashed var(--line);border-radius:var(--radius)}
   .summary{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
@@ -202,9 +189,9 @@
   }
   .toast.show{opacity:1}
   @media(max-width:560px){
-    .prog{flex-basis:88px}
+    .row{flex-wrap:wrap}
+    .prog{flex-basis:100%;order:10;margin-left:30px}
     .title{font-size:13.5px}
-    .acts .iconbtn:nth-child(n+2){display:none}
     .hhead,.hrow{grid-template-columns:1fr repeat(7,30px) 40px}
     .hcell{width:26px;height:26px}
     .wkdates{display:none}
@@ -265,7 +252,7 @@
       <div class="big" id="sumPct">0%</div>
       <div class="bar"><span id="sumBar" style="width:0%"></span></div>
     </div>
-    <div class="hint">Галочки ставь на задачах (день). Процент считается сам и поднимается наверх: день → неделя → месяц → квартал → год. Клик по названию — переименовать, «＋» — добавить подпункт.</div>
+    <div class="hint">Список целей. Клик по названию — переименовать. «＋» рядом с пунктом — добавить подпункт (подпункты можно вкладывать друг в друга хоть на сколько угодно уровней). Галочки ставь на самых мелких пунктах — процент каждой цели считается сам.</div>
     <div class="tree" id="tree"></div>
     <div style="margin-top:14px">
       <button class="btn primary" id="btnAddRoot">＋ Добавить цель</button>
@@ -357,13 +344,6 @@
 </div>
 <div class="toast" id="toast"></div><script>
 const LS_KEY = "planner.v2";
-const LEVELS = {
-  year:{label:"Год", cls:"b-year"},
-  quarter:{label:"Квартал", cls:"b-quarter"},
-  month:{label:"Месяц", cls:"b-month"},
-  week:{label:"Неделя", cls:"b-week"},
-  day:{label:"День", cls:"b-day"}
-};
 const ANCHORS = [
   "Первый час дня — без телефона",
   "Цифровой закат: экраны off за час до сна",
@@ -555,7 +535,6 @@ $("#btnAddTask").onclick = () => {
 /* ================= GOALS TREE ================= */
 let editingId = null;
 let addChildTo = null;
-let editorLevel = "day";
 
 function findNode(id, list){
   for(const n of list||data.goals){
@@ -619,13 +598,8 @@ function renderNode(node){
   const title = document.createElement("div");
   title.className = "title" + (node.done ? " done" : "");
   title.textContent = node.title;
-  title.onclick = () => { editingId = node.id; addChildTo = null; editorLevel = node.level; renderGoals(); };
+  title.onclick = () => { editingId = node.id; addChildTo = null; renderGoals(); };
   row.appendChild(title);
-
-  const badge = document.createElement("span");
-  badge.className = "badge " + LEVELS[node.level].cls;
-  badge.textContent = LEVELS[node.level].label;
-  row.appendChild(badge);
 
   const prog = document.createElement("div");
   prog.className = "prog";
@@ -636,7 +610,7 @@ function renderNode(node){
   acts.className = "acts";
   const plus = document.createElement("button");
   plus.className = "iconbtn"; plus.textContent = "＋"; plus.title = "Добавить подпункт";
-  plus.onclick = (e) => { e.stopPropagation(); addChildTo = node.id; editingId = null; editorLevel = "day"; renderGoals(); };
+  plus.onclick = (e) => { e.stopPropagation(); addChildTo = node.id; editingId = null; renderGoals(); };
   const del = document.createElement("button");
   del.className = "iconbtn"; del.textContent = "✕"; del.title = "Удалить";
   del.onclick = (e) => {
@@ -674,17 +648,6 @@ function renderEditor(node){
   const input = document.createElement("input");
   input.type = "text";
   input.value = node.title;
-  const lrow = document.createElement("div");
-  lrow.className = "lrow";
-  lrow.innerHTML = '<span style="font-size:12px;color:var(--muted)">Уровень:</span>';
-  Object.keys(LEVELS).forEach(k=>{
-    const o = document.createElement("span");
-    o.className = "lvlopt" + (k===node.level ? " sel" : "");
-    o.dataset.lv = k;
-    o.textContent = LEVELS[k].label;
-    o.onclick = () => { node.level = k; ed.querySelectorAll(".lvlopt").forEach(x=>x.classList.toggle("sel", x.dataset.lv===k)); };
-    lrow.appendChild(o);
-  });
   const erow = document.createElement("div");
   erow.className = "erow";
   const cancel = document.createElement("button");
@@ -701,7 +664,6 @@ function renderEditor(node){
   input.onkeydown = (e) => { if(e.key==="Enter") ok.onclick(); };
   erow.appendChild(cancel); erow.appendChild(ok);
   ed.appendChild(input);
-  ed.appendChild(lrow);
   ed.appendChild(erow);
   setTimeout(()=>{ input.focus(); input.select(); }, 30);
   return ed;
@@ -713,17 +675,6 @@ function renderAddChild(parent){
   const input = document.createElement("input");
   input.type = "text";
   input.placeholder = "Название подпункта…";
-  const lrow = document.createElement("div");
-  lrow.className = "lrow";
-  lrow.innerHTML = '<span style="font-size:12px;color:var(--muted)">Уровень:</span>';
-  Object.keys(LEVELS).forEach(k=>{
-    const o = document.createElement("span");
-    o.className = "lvlopt" + (k===editorLevel ? " sel" : "");
-    o.dataset.lv = k;
-    o.textContent = LEVELS[k].label;
-    o.onclick = () => { editorLevel = k; ed.querySelectorAll(".lvlopt").forEach(x=>x.classList.toggle("sel", x.dataset.lv===k)); };
-    lrow.appendChild(o);
-  });
   const erow = document.createElement("div");
   erow.className = "erow";
   const cancel = document.createElement("button");
@@ -734,7 +685,7 @@ function renderAddChild(parent){
   ok.onclick = () => {
     const v = input.value.trim();
     if(v){
-      parent.children.push({id:nid(), title:v, level:editorLevel, done:false, open:true, children:[]});
+      parent.children.push({id:nid(), title:v, done:false, open:true, children:[]});
       parent.open = true;
     }
     addChildTo = null;
@@ -743,16 +694,14 @@ function renderAddChild(parent){
   input.onkeydown = (e) => { if(e.key==="Enter") ok.onclick(); };
   erow.appendChild(cancel); erow.appendChild(ok);
   ed.appendChild(input);
-  ed.appendChild(lrow);
   ed.appendChild(erow);
   setTimeout(()=>input.focus(), 30);
   return ed;
 }
 
 $("#btnAddRoot").onclick = () => {
-  data.goals.push({id:nid(), title:"Новая цель", level:"year", done:false, open:true, children:[]});
+  data.goals.push({id:nid(), title:"Новая цель", done:false, open:true, children:[]});
   editingId = data.goals[data.goals.length-1].id;
-  editorLevel = "year";
   renderGoals();
 };
 
